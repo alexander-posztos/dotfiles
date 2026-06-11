@@ -1,0 +1,15 @@
+tags
+test.sh
+.luarc.json
+nvim
+
+spell/
+lazy-lock.json
+# Ignore Karabiner automatic backups
+karabiner/automatic_backups/
+
+# But keep the main config
+!karabiner/karabiner.json
+
+# Keep AeroSpace config
+!aerospace/

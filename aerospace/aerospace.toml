@@ -1,0 +1,87 @@
+start-at-login = true
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+[gaps]
+inner.horizontal = 8
+inner.vertical = 8
+outer.left = 8
+outer.bottom = 8
+outer.top = 8
+outer.right = 8
+
+[mode.main.binding]
+# Navigation - Caps Lock + h/j/k/l
+ctrl-alt-cmd-h = 'focus left'
+ctrl-alt-cmd-j = 'focus down'
+ctrl-alt-cmd-k = 'focus up'
+ctrl-alt-cmd-l = 'focus right'
+
+# Move windows - Caps Lock + Shift + h/j/k/l  
+ctrl-alt-cmd-shift-h = 'move left'
+ctrl-alt-cmd-shift-j = 'move down'
+ctrl-alt-cmd-shift-k = 'move up'
+ctrl-alt-cmd-shift-l = 'move right'
+
+# Workspaces - Caps Lock + number
+ctrl-alt-cmd-1 = 'workspace 1'
+ctrl-alt-cmd-2 = 'workspace 2'
+ctrl-alt-cmd-3 = 'workspace 3'
+ctrl-alt-cmd-4 = 'workspace 4'
+ctrl-alt-cmd-5 = 'workspace 5'
+ctrl-alt-cmd-6 = 'workspace 6'
+ctrl-alt-cmd-7 = 'workspace 7'
+ctrl-alt-cmd-8 = 'workspace 8'
+ctrl-alt-cmd-9 = 'workspace 9'
+
+# Move to workspace - Caps Lock + Shift + number
+ctrl-alt-cmd-shift-1 = 'move-node-to-workspace 1'
+ctrl-alt-cmd-shift-2 = 'move-node-to-workspace 2'
+ctrl-alt-cmd-shift-3 = 'move-node-to-workspace 3'
+ctrl-alt-cmd-shift-4 = 'move-node-to-workspace 4'
+ctrl-alt-cmd-shift-5 = 'move-node-to-workspace 5'
+ctrl-alt-cmd-shift-6 = 'move-node-to-workspace 6'
+ctrl-alt-cmd-shift-7 = 'move-node-to-workspace 7'
+ctrl-alt-cmd-shift-8 = 'move-node-to-workspace 8'
+ctrl-alt-cmd-shift-9 = 'move-node-to-workspace 9'
+
+ctrl-alt-cmd-b = 'exec-and-forget open -a "Firefox"'  # or "Google Chrome" or "Safari"
+ctrl-alt-cmd-t = 'exec-and-forget open -a "Ghostty"'
+ctrl-alt-cmd-d = 'exec-and-forget open -a "Discord"'
+
+# Multi-monitor - Move workspace to next/prev monitor
+ctrl-alt-cmd-tab = 'move-workspace-to-monitor --wrap-around next'
+ctrl-alt-cmd-shift-tab = 'move-workspace-to-monitor --wrap-around prev'
+
+# Multi-monitor - Focus next/prev monitor directly
+ctrl-alt-cmd-n = 'focus-monitor --wrap-around prev'
+ctrl-alt-cmd-m = 'focus-monitor --wrap-around next'
+
+# Multi-monitor - Move window to next/prev monitor
+ctrl-alt-cmd-shift-n = 'move-node-to-monitor --wrap-around prev'
+ctrl-alt-cmd-shift-m = 'move-node-to-monitor --wrap-around next'
+
+# Toggle floating/tiling - Caps Lock + Space
+ctrl-alt-cmd-space = 'layout floating tiling'
+
+# Fullscreen - Caps Lock + f
+ctrl-alt-cmd-f = 'fullscreen'
+
+# Resize with comma/period (easy on German keyboard)
+ctrl-alt-cmd-comma = 'resize smart -50'
+ctrl-alt-cmd-period = 'resize smart +50'
+
+# Service mode - Caps Lock + /
+ctrl-alt-cmd-slash = 'mode service'
+
+[mode.service.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main']
+f = ['layout floating tiling', 'mode main']
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = 'layout tiling'

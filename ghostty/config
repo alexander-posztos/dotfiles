@@ -1,0 +1,44 @@
+# ======================
+# Ghostty Configuration 
+# ======================
+
+# Theme
+theme = TokyoNight Night
+
+# Transparency & Blur for Glassmorphic look
+background-opacity = 0.85
+background-blur-radius = 16
+background = #000000
+
+# macOS Titlebar
+macos-titlebar-style = hidden 
+
+# Window Padding - More breathing room
+window-padding-x = 16
+window-padding-y = 16
+window-padding-balance = true
+
+# Font Configuration
+font-family = "JetBrainsMono Nerd Font"
+font-size = 14
+font-feature = -liga
+font-thicken = true
+font-thicken-strength = 1
+adjust-cell-height = 1
+
+# Cursor Customization
+cursor-style = block
+cursor-color = #7aa2f7
+
+# Working Directory
+working-directory = home
+window-inherit-working-directory = true
+
+# Keybindings
+keybind = cmd+d=new_split:right    
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+left=previous_tab
+keybind = cmd+right=next_tab
+keybind = shift+enter=text:\x1b\r
+
+clipboard-paste-protection=false

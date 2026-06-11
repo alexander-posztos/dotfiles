@@ -1,0 +1,86 @@
+gui:
+  nerdFontsVersion: "3"
+  showIcons: true
+  showCommandLog: false
+  showFileTree: true
+  showListFooter: false
+  showRandomTip: false
+  showBottomLine: false
+  expandFocusedSidePanel: true
+  expandedSidePanelWeight: 3
+  sidePanelWidth: 0.2
+  theme:
+    activeBorderColor:
+      - "#ff9e64"
+      - "bold"
+    inactiveBorderColor:
+      - "#27a1b9"
+    searchingActiveBorderColor:
+      - "#ff9e64"
+      - "bold"
+    optionsTextColor:
+      - "#7aa2f7"
+    selectedLineBgColor:
+      - "#283457"
+    inactiveViewSelectedLineBgColor:
+      - "#16161e"
+    cherryPickedCommitFgColor:
+      - "#7aa2f7"
+    cherryPickedCommitBgColor:
+      - "#bb9af7"
+    markedBaseCommitFgColor:
+      - "#7aa2f7"
+    markedBaseCommitBgColor:
+      - "#e0af68"
+    unstagedChangesColor:
+      - "#db4b4b"
+    defaultFgColor:
+      - "#c0caf5"
+git:
+  pagers:
+    - colorArg: always
+      pager: >-
+        delta
+        --dark
+        --paging=never
+        --syntax-theme=TwoDark
+        --line-numbers
+        --file-style="#7aa2f7 bold"
+        --hunk-header-style="#bb9af7"
+        --hunk-header-decoration-style="#3b4261"
+        --line-numbers-left-style="#565f89"
+        --line-numbers-right-style="#565f89"
+        --line-numbers-minus-style="#f7768e"
+        --line-numbers-plus-style="#9ece6a"
+        --minus-style="syntax #3b2230"
+        --minus-emph-style="syntax #5a2a3a"
+        --plus-style="syntax #1f3a36"
+        --plus-emph-style="syntax #2f5248"
+        --zero-style="syntax"
+    - colorArg: always
+      pager: >-
+        delta
+        --dark
+        --paging=never
+        --syntax-theme=TwoDark
+        --line-numbers
+        --side-by-side
+        --file-style="#7aa2f7 bold"
+        --hunk-header-style="#bb9af7"
+        --hunk-header-decoration-style="#3b4261"
+        --line-numbers-left-style="#565f89"
+        --line-numbers-right-style="#565f89"
+        --line-numbers-minus-style="#f7768e"
+        --line-numbers-plus-style="#9ece6a"
+        --minus-style="syntax #3b2230"
+        --minus-emph-style="syntax #5a2a3a"
+        --plus-style="syntax #1f3a36"
+        --plus-emph-style="syntax #2f5248"
+        --zero-style="syntax"
+
+keybinding:
+  universal:
+    cyclePagers: 'ä'
+    focusMainView: 'ö'
+    nextScreenMode: '+'
+    prevScreenMode: '_'

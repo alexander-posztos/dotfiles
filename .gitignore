@@ -1,0 +1,17 @@
+# Raycast extensions (auto-generated)
+raycast/extensions/
+
+# Machine-local app state and secrets
+claude/
+configstore/
+gcp/
+gh/
+himalaya/
+mpv/
+stripe/
+
+# Pi config moved to its own repo
+pi/
+
+# Machine-local project registry (see nvim/lua/custom/projects-example.lua)
+nvim/lua/custom/projects.lua
