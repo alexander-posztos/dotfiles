@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__ - PRD</title>
+<style>
+  :root {
+    --max-w: 740px;
+    --sidebar-w: 220px;
+    --gap: 56px;
+
+    --bg: #faf8f3;
+    --text: #1c1a17;
+    --muted: #6b665c;
+    --heading: #0a0a08;
+    --rule: #d8d2bf;
+    --accent: #6b4019;
+    --link: #1e4b8e;
+    --code-bg: #efeadb;
+    --code-text: #4a2f0f;
+    --table-border: #cbc4ad;
+    --pill-bg: #e7ddc4;
+    --pill-text: #6b4019;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1814;
+      --text: #ece8df;
+      --muted: #969084;
+      --heading: #faf6ec;
+      --rule: #3a352b;
+      --accent: #d9a05b;
+      --link: #8ab4f8;
+      --code-bg: #2a2620;
+      --code-text: #e6c87a;
+      --table-border: #443d2f;
+      --pill-bg: #2e2719;
+      --pill-text: #d9a05b;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Source Serif Pro", "Charter", "Iowan Old Style", "Iowan", Cambria, Georgia, serif;
+    font-feature-settings: "kern", "liga", "onum";
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, var(--max-w));
+    column-gap: var(--gap);
+    justify-content: center;
+    padding: 56px 32px 96px;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 32px;
+    align-self: start;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .sidebar ol { list-style: none; padding: 0; margin: 0; counter-reset: toc; }
+  .sidebar li { margin: 2px 0; counter-increment: toc; }
+  .sidebar a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    padding: 5px 0 5px 14px;
+    border-left: 2px solid transparent;
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--heading);
+    border-left-color: var(--accent);
+    background: rgba(0,0,0,0.02);
+  }
+
+  main { min-width: 0; }
+
+  h1, h2, h3, h4 {
+    font-family: "Source Serif Pro", "Charter", "Iowan Old Style", "Iowan", Cambria, Georgia, serif;
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+  }
+  h1 {
+    font-size: 34px;
+    margin: 0 0 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h2 {
+    font-size: 24px;
+    margin: 48px 0 16px;
+    padding-top: 8px;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 28px 0 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  p { margin: 0 0 16px; }
+  strong { font-weight: 700; color: var(--heading); }
+  em { font-style: italic; }
+
+  a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-color: rgba(30, 75, 142, 0.35);
+    text-underline-offset: 2px;
+  }
+  a:hover { text-decoration-color: currentColor; }
+
+  code {
+    font-family: "JetBrains Mono", "SF Mono", "Menlo", "Consolas", monospace;
+    font-size: 0.85em;
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 22px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+  }
+  thead { background: var(--code-bg); }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--table-border);
+    vertical-align: top;
+  }
+  th { font-weight: 600; color: var(--heading); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  hr { border: none; height: 1px; background: var(--rule); margin: 28px 0; }
+
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin: 7px 0; }
+  li > p { margin: 0 0 8px; }
+
+  /* User stories read as a long numbered list; give them room to breathe */
+  ol.stories { counter-reset: story; list-style: none; padding-left: 0; }
+  ol.stories li {
+    counter-increment: story;
+    position: relative;
+    padding: 4px 0 4px 38px;
+    margin: 4px 0;
+  }
+  ol.stories li::before {
+    content: counter(story);
+    position: absolute;
+    left: 0;
+    top: 4px;
+    min-width: 26px;
+    text-align: right;
+    color: var(--accent);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  /* Header metadata block */
+  .header-block {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .status {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    padding: 3px 9px;
+    border-radius: 100px;
+    margin-right: 10px;
+    vertical-align: 1px;
+  }
+
+  section[id^="s-"] { scroll-margin-top: 24px; }
+
+  @media (max-width: 960px) {
+    .layout {
+      grid-template-columns: 1fr;
+      column-gap: 0;
+      padding: 28px 22px 80px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .sidebar {
+      position: static;
+      max-height: none;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--rule);
+    }
+    html { font-size: 16px; }
+  }
+
+  @media print {
+    .sidebar { display: none; }
+    .layout { display: block; padding: 0; max-width: none; }
+    body { font-size: 11pt; }
+    h1 { font-size: 22pt; }
+    h2 { font-size: 14pt; page-break-after: avoid; }
+    section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" aria-label="Table of contents">
+    <p class="sidebar-title">Contents</p>
+    <ol>
+      <li><a href="#s-problem">1. Problem Statement</a></li>
+      <li><a href="#s-solution">2. Solution</a></li>
+      <li><a href="#s-user-stories">3. User Stories</a></li>
+      <li><a href="#s-implementation">4. Implementation Decisions</a></li>
+      <li><a href="#s-testing">5. Testing Decisions</a></li>
+      <li><a href="#s-out-of-scope">6. Out of Scope</a></li>
+      <li><a href="#s-notes">7. Further Notes</a></li>
+    </ol>
+  </aside>
+  <main>
+<h1>__TITLE__</h1>
+<p class="header-block"><span class="status">__STATUS__</span>Product Requirements Document &middot; __DATE__</p>
+<hr />
+
+<!--
+  FILL INSTRUCTIONS (delete this comment in the output):
+  - Replace __TITLE__, __STATUS__ (default "Draft"), __DATE__ in the header above.
+  - Fill each <section> body where marked. Mirror the existing markup: <p> for prose,
+    <ol class="stories"> for the user-story list, <ul>/<ol> elsewhere, <code> for module
+    and interface names, <table> where a comparison helps.
+  - Delete an optional section (and its sidebar <li>) if it has no content.
+  - Keep this a single self-contained file. Do not add external CSS, fonts, or a CDN link.
+-->
+
+<section id="s-problem">
+<h2>1. Problem Statement</h2>
+<!-- The problem the user is facing, from the user's perspective. -->
+</section>
+
+<section id="s-solution">
+<h2>2. Solution</h2>
+<!-- The solution to the problem, from the user's perspective. -->
+</section>
+
+<section id="s-user-stories">
+<h2>3. User Stories</h2>
+<!-- A long, extensive list covering all aspects of the feature.
+     Format each: As an <actor>, I want a <feature>, so that <benefit>. -->
+<ol class="stories">
+  <!-- <li>As a ..., I want ..., so that ...</li> -->
+</ol>
+</section>
+
+<section id="s-implementation">
+<h2>4. Implementation Decisions</h2>
+<!-- Modules built/modified, interfaces, architectural decisions, schema changes,
+     API contracts, specific interactions. No file paths or code snippets. -->
+</section>
+
+<section id="s-testing">
+<h2>5. Testing Decisions</h2>
+<!-- What makes a good test (external behavior, not implementation details),
+     which modules will be tested, and prior art for similar tests. -->
+</section>
+
+<section id="s-out-of-scope">
+<h2>6. Out of Scope</h2>
+<!-- What is explicitly out of scope for this PRD. -->
+</section>
+
+<section id="s-notes">
+<h2>7. Further Notes</h2>
+<!-- Any further notes about the feature. -->
+</section>
+  </main>
+</div>
+
+<script>
+  // TOC active-section highlight
+  const links = document.querySelectorAll('.sidebar a');
+  const sections = document.querySelectorAll('section[id^="s-"]');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '0px 0px -75% 0px' });
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
