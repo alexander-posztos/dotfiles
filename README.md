@@ -6,6 +6,7 @@ My macOS configuration - a tiling, keyboard-centric setup for Python/Django web 
 
 - `aerospace/` - AeroSpace tiling window manager
 - `borders/` - active-window border highlights
+- `claude/skills/` - custom Claude Code skills (see its README)
 - `ghostty/` - Ghostty terminal (Tokyo Night, translucent, JetBrainsMono Nerd Font)
 - `karabiner/` - Caps Lock as Hyper key (Ctrl+Alt+Cmd), tap for Escape
 - `lazygit/` - lazygit config
