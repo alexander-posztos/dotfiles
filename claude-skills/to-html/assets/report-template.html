@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>__TITLE__</title>
+<style>
+  :root {
+    --measure: 68ch;
+    --sidebar-w: 200px;
+    --gap: 64px;
+
+    --bg: oklch(1 0 0);
+    --surface: oklch(0.966 0.006 220);
+    --text: oklch(0.24 0.014 240);
+    --heading: oklch(0.16 0.016 240);
+    --muted: oklch(0.52 0.046 230);
+    --steel: oklch(0.50 0.088 225);
+    --rule: oklch(0.895 0.010 230);
+    --hairline: oklch(0.935 0.007 230);
+    --mark: oklch(0.50 0.088 225 / 0.14);
+
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --sans: "Avenir Next", Avenir, Corbel, "Segoe UI", sans-serif;
+    --mono: Menlo, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+    --leading: 1.66;
+    --tracking: 0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: oklch(0.12 0 0);
+      --surface: oklch(0.175 0.010 230);
+      --text: oklch(0.895 0.010 230);
+      --heading: oklch(0.965 0.006 230);
+      --muted: oklch(0.68 0.044 230);
+      --steel: oklch(0.72 0.082 225);
+      --rule: oklch(0.30 0.012 230);
+      --hairline: oklch(0.225 0.008 230);
+      --mark: oklch(0.72 0.082 225 / 0.2);
+
+      --leading: 1.72;
+      --tracking: 0.004em;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    font-feature-settings: "kern", "liga";
+    line-height: var(--leading);
+    letter-spacing: var(--tracking);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: var(--mark); }
+
+  :focus-visible {
+    outline: 2px solid var(--steel);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, var(--measure));
+    column-gap: var(--gap);
+    justify-content: center;
+    padding: 76px 32px 128px;
+  }
+
+  /* Table of contents */
+  .sidebar {
+    position: sticky;
+    top: 44px;
+    align-self: start;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+  .sidebar-title {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 14px 15px;
+  }
+  .sidebar ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid var(--hairline);
+  }
+  .sidebar li { margin: 0; }
+  .sidebar a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    padding: 6px 0 6px 14px;
+    border-left: 1px solid transparent;
+    margin-left: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .sidebar a:hover { color: var(--text); }
+  .sidebar a.active {
+    color: var(--heading);
+    border-left-color: var(--steel);
+  }
+
+  main { min-width: 0; }
+
+  /* Masthead */
+  h1 {
+    font-size: clamp(2.05rem, 1.1rem + 4.6vw, 4.25rem);
+    font-weight: 900;
+    color: var(--heading);
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+    margin: 0 0 20px;
+  }
+  .meta {
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin: 0 0 36px;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--steel);
+  }
+  .meta .kind { color: var(--text); font-weight: 500; }
+  .meta .sep { padding: 0 9px; color: var(--rule); }
+
+  h2, h3 {
+    color: var(--heading);
+    line-height: 1.15;
+  }
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+    margin: 0 0 0.85rem;
+  }
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.008em;
+    margin: 2.2rem 0 0.5rem;
+  }
+  section > h2:first-child { margin-top: 0; }
+
+  p { margin: 0 0 1rem; }
+  strong { font-weight: 700; color: var(--heading); }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--mark);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  a:hover { text-decoration-color: var(--steel); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.78em;
+    color: var(--text);
+    background: var(--surface);
+    padding: 0.15em 0.35em;
+    border-radius: 2px;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  pre {
+    background: var(--surface);
+    border-radius: 3px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 0 0 1rem;
+    line-height: 1.55;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    white-space: pre;
+    overflow-wrap: normal;
+    font-size: 0.76rem;
+  }
+
+  /* Tables: instrument ruling, tabular figures, no filled header band */
+  .table-wrap { overflow-x: auto; margin: 1.7rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  th, td {
+    padding: 9px 16px 9px 0;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--hairline);
+  }
+  th {
+    font-weight: 500;
+    color: var(--muted);
+    border-bottom: 2px solid var(--steel);
+    padding-bottom: 7px;
+  }
+  th:last-child, td:last-child { padding-right: 0; }
+  .num { text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.total td {
+    font-weight: 600;
+    color: var(--heading);
+    border-top: 1px solid var(--rule);
+  }
+
+  hr { border: none; height: 1px; background: var(--rule); margin: 2.4rem 0; }
+
+  ul, ol { padding-left: 1.15em; margin: 0 0 1rem; }
+  li { margin: 0.4rem 0; }
+  li::marker { color: var(--muted); }
+  li > p { margin: 0 0 0.5rem; }
+  li > ul, li > ol { margin-top: 0.4rem; }
+
+  /* Ranked findings where the order carries meaning */
+  ol.numbered { counter-reset: item; list-style: none; padding-left: 0; }
+  ol.numbered > li {
+    counter-increment: item;
+    position: relative;
+    padding-left: 2.3rem;
+    margin: 0.85rem 0;
+  }
+  ol.numbered > li::before {
+    content: counter(item);
+    position: absolute;
+    left: 0;
+    top: 0.28em;
+    width: 1.5rem;
+    text-align: right;
+    color: var(--steel);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  blockquote {
+    margin: 1.5rem 0;
+    padding-left: 1.2rem;
+    border-left: 1px solid var(--rule);
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Aside for caveats, method notes, limitations */
+  .note {
+    margin: 1.7rem 0;
+    padding: 2px 0 2px 1.2rem;
+    border-left: 1px solid var(--steel);
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .note p:last-child, .note ul:last-child { margin-bottom: 0; }
+
+  /* Base64-embedded screenshots */
+  figure.shot { margin: 1.9rem 0; }
+  figure.shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+  }
+
+  /* Inline-SVG charts and diagrams */
+  figure.chart { margin: 2.1rem 0; }
+  figure.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+  figcaption {
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* Lede: the 3-6 bullets a reader could stop after */
+  .tldr {
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+  .tldr-label {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--heading);
+    margin: 0 0 0.75rem;
+  }
+  .tldr ul { margin: 0; padding-left: 1.1em; }
+  .tldr li { margin: 0.7rem 0; font-size: 1.24rem; line-height: 1.45; color: var(--heading); }
+  .tldr li::marker { color: var(--steel); }
+
+  section[id^="s-"] {
+    scroll-margin-top: 44px;
+    margin-top: 3.6rem;
+    padding-top: 1.4rem;
+    border-top: 2px solid var(--steel);
+  }
+
+  @media (min-width: 961px) {
+    html { scroll-behavior: smooth; }
+  }
+
+  @media (max-width: 960px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 36px 24px 88px;
+    }
+    .sidebar {
+      position: static;
+      max-height: none;
+      margin-bottom: 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .sidebar-title { margin-left: 0; }
+    .sidebar ol { border-left: none; columns: 2; column-gap: 24px; }
+    .sidebar a { padding-left: 0; border-left: none; margin-left: 0; }
+    .sidebar a.active { border-left: none; color: var(--steel); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition-duration: 0.01ms !important; }
+  }
+
+  @media print {
+    :root {
+      --bg: #fff; --text: #000; --heading: #000; --muted: #444;
+      --rule: #999; --hairline: #ccc; --surface: #f2f2f2;
+      --steel: #000; --mark: transparent;
+    }
+    .sidebar { display: none; }
+    .layout { display: block; padding: 0; max-width: none; }
+    body { font-size: 10.5pt; }
+    h1 { font-size: 20pt; }
+    h2 { font-size: 13pt; page-break-after: avoid; }
+    h3 { page-break-after: avoid; }
+    section, figure, .tldr, .table-wrap, blockquote { page-break-inside: avoid; }
+    a { text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar" aria-label="Table of contents">
+    <p class="sidebar-title">Contents</p>
+    <ol>
+      <li><a href="#s-first-section">First section</a></li>
+      <li><a href="#s-second-section">Second section</a></li>
+    </ol>
+  </nav>
+  <main>
+<h1>__TITLE__</h1>
+<p class="meta"><span class="kind">__KIND__</span><span class="sep">/</span>__META__</p>
+
+<!--
+  FILL INSTRUCTIONS (delete this comment in the output):
+  - Replace __TITLE__, __KIND__ (1-2 word document type: Findings, Research, Review),
+    and __META__ (short free-form line: scope, source counts, compiled date).
+  - Sections follow the content's own shape: one <section id="s-<slug>"> per topic and
+    one matching sidebar <li>, in the same order. Replace the two placeholder sections;
+    add or remove freely. Never number section headings or TOC entries.
+  - The TLDR block stays first: 3-6 bullets a reader could stop after.
+  - Markup vocabulary: <p> for prose, <ol class="numbered"> only where rank carries
+    meaning, <table> inside <div class="table-wrap"> for comparisons (class="num" on
+    numeric cells, class="total" on a summary row), <div class="note"> for caveats and
+    method asides, <blockquote> for quoted material, <pre><code> for multi-line code,
+    <code> for identifiers, <figure class="chart"> for inline-SVG charts (CSS variables
+    for all colors, aria-label on the <svg>, a <figcaption> stating the insight),
+    <figure class="shot"> for base64-embedded images.
+  - Keep it one self-contained file: no external CSS, fonts, scripts, or images.
+-->
+
+<div class="tldr">
+<p class="tldr-label">TL;DR</p>
+<ul>
+  <li></li>
+</ul>
+</div>
+
+<section id="s-first-section">
+<h2>First section</h2>
+<p></p>
+</section>
+
+<section id="s-second-section">
+<h2>Second section</h2>
+<p></p>
+</section>
+  </main>
+</div>
+
+<script>
+  const links = Array.from(document.querySelectorAll('.sidebar a'));
+  const sections = links
+    .map(l => document.getElementById(l.getAttribute('href').slice(1)))
+    .filter(Boolean);
+
+  if (sections.length) {
+    let ticking = false;
+    const sync = () => {
+      ticking = false;
+      const line = window.scrollY + window.innerHeight * 0.25;
+      let index = 0;
+      sections.forEach((s, i) => { if (s.offsetTop <= line) index = i; });
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+        index = sections.length - 1;
+      }
+      links.forEach((l, i) => l.classList.toggle('active', i === index));
+    };
+    addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(sync); }
+    }, { passive: true });
+    addEventListener('resize', sync, { passive: true });
+    sync();
+  }
+</script>
+</body>
+</html>
