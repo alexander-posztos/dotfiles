@@ -3,7 +3,7 @@ name: to-prd
 description: Turn the current conversation context into a PRD and write it to a single-page HTML file for later review. Use when user wants to create a PRD from the current context.
 ---
 
-This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
+This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user - just synthesize what you already know.
 
 ## Process
 
@@ -11,9 +11,11 @@ This skill takes the current conversation context and codebase understanding and
 
 2. Write the PRD and save it as a single-page HTML file at `prds/<slugified-title>.html` in the current project.
 
-   Read `assets/prd-template.html` from this skill's directory and use it as the shell. It carries the full house style as a self-contained `<style>` block (capped line length for readability, serif body with sans-serif chrome, warm paper palette, dark mode, a sticky table-of-contents with scroll-spy, and a print stylesheet) plus a section + TOC scaffold that already matches the template below. To fill it:
+   Read `assets/prd-template.html` from this skill's directory and use it as the shell. It carries the full house style as a self-contained `<style>` block (capped line length for readability, Charter serif body with a steel-blue chrome layer on white paper, dark mode, a sticky table-of-contents with scroll-spy, and a print stylesheet) plus a section + TOC scaffold that already matches the template below. To fill it:
    - Replace `__TITLE__`, `__STATUS__` (default `Draft`), and `__DATE__` (today's date) in the header.
-   - Fill each `<section>` body where the comments mark it, mirroring the existing markup: `<p>` for prose, `<ol class="stories">` for the user-story list, `<code>` for module and interface names. Delete an optional section (and its sidebar `<li>`) if it has no content. Remove the fill-instructions comment from the output.
+   - Fill each `<section>` body where the comments mark it, mirroring the existing markup: `<p>` for prose, `<ol class="stories">` for the user-story list, `<code>` for module and interface names, `<table>` inside a `<div class="table-wrap">`. Delete an optional section (and its sidebar `<li>`) if it has no content. Remove the fill-instructions comment from the output.
+
+   The shell owns every visual decision. Add markup, never CSS: no new `<style>` rules, no inline `style` attributes, no colors outside the CSS variables. Skip emoji and status glyphs, uppercase letterspaced micro-labels, and pill badges - the header's status word is the only chrome label the document gets.
 
    Keep it a single self-contained file: do not link any external CSS, fonts, or CDN. A self-contained file renders identically offline and never breaks on a dead CDN link, which matters for a document meant to be reopened and reviewed later.
 
