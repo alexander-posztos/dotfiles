@@ -20,6 +20,8 @@
     --rule: oklch(0.895 0.010 230);
     --hairline: oklch(0.935 0.007 230);
     --mark: oklch(0.50 0.088 225 / 0.14);
+    --ok: oklch(0.52 0.10 155);
+    --no: oklch(0.55 0.13 25);
 
     --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
     --sans: "Avenir Next", Avenir, Corbel, "Segoe UI", sans-serif;
@@ -40,6 +42,8 @@
       --rule: oklch(0.30 0.012 230);
       --hairline: oklch(0.225 0.008 230);
       --mark: oklch(0.72 0.082 225 / 0.2);
+      --ok: oklch(0.74 0.13 155);
+      --no: oklch(0.72 0.15 25);
 
       --leading: 1.72;
       --tracking: 0.004em;
@@ -281,6 +285,37 @@
   }
   .note p:last-child, .note ul:last-child { margin-bottom: 0; }
 
+  /* One discrete, decidable proposal. Only use these when the document really is
+     a list of proposals - their presence is what turns on the accept/reject controls. */
+  .proposal {
+    margin: 2.2rem 0;
+    padding-left: 1.15rem;
+    border-left: 2px solid var(--rule);
+    transition: border-color 0.15s ease, opacity 0.15s ease;
+  }
+  .proposal > :first-child { margin-top: 0; }
+  .proposal[data-dec="accept"] { border-left-color: var(--ok); }
+  .proposal[data-dec="reject"] { border-left-color: var(--no); opacity: 0.5; }
+  .proposal .loc {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin-left: 0.6em;
+  }
+  /* Label over a before/after pair */
+  .lbl {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin: 1.1rem 0 0.35rem;
+  }
+  pre.before code { color: var(--muted); }
+  pre.after { background: var(--mark); }
+
   /* Base64-embedded screenshots */
   figure.shot { margin: 1.9rem 0; }
   figure.shot img {
@@ -373,6 +408,143 @@
     a { text-decoration: none; }
   }
 </style>
+<style id="editor-style">
+  /* Editor layer: inline editing, per-block comments, accept/reject on .proposal.
+     For a read-only page, delete this element and the script element with
+     id="editor" - nothing else in the file depends on either. */
+
+  [data-ed] { position: relative; }
+  [data-ed]:focus { outline: none; background: var(--mark); border-radius: 2px; }
+  [data-ed][data-changed]::after {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 2px;
+    background: var(--steel);
+    border-radius: 1px;
+  }
+
+  /* One floating toolbar, parked in the gutter of whichever block is hovered */
+  #gutter {
+    position: absolute;
+    display: none;
+    gap: 1px;
+    z-index: 20;
+    transform: translateX(-100%);
+  }
+  #gutter[data-on] { display: flex; }
+  /* No gutter to sit in on narrow screens: park it above the block instead */
+  #gutter[data-above] { transform: none; }
+  #gutter button {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    line-height: 1;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 4px 5px;
+    cursor: pointer;
+  }
+  #gutter button:hover { color: var(--steel); border-color: var(--hairline); }
+  #gutter button[hidden] { display: none; }
+
+  .cmt {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0.6rem 0 1.2rem;
+    padding: 8px 10px;
+    background: var(--surface);
+    border-left: 2px solid var(--steel);
+    border-radius: 0 3px 3px 0;
+    font-family: var(--sans);
+    font-size: 0.84rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+  .cmt-body { flex: 1; min-width: 0; }
+  .cmt-q { color: var(--muted); font-size: 0.78rem; margin: 0 0 4px; font-style: italic; }
+  .cmt-in { outline: none; min-height: 1.5em; overflow-wrap: anywhere; }
+  .cmt-in:empty::before { content: attr(data-ph); color: var(--muted); }
+  .cmt-x {
+    flex: none;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    padding: 2px 4px;
+    cursor: pointer;
+  }
+  .cmt-x:hover { color: var(--no); }
+
+  .dec { display: flex; gap: 6px; margin-top: 0.9rem; }
+  .dec button {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 3px 11px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .dec button:hover { color: var(--text); border-color: var(--muted); }
+  .dec button[value="accept"][data-on] { color: var(--ok); border-color: var(--ok); }
+  .dec button[value="reject"][data-on] { color: var(--no); border-color: var(--no); }
+
+  #ed-bar {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    box-shadow: 0 6px 22px oklch(0 0 0 / 0.14);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  #ed-bar button {
+    font: inherit;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 3px 10px;
+    cursor: pointer;
+  }
+  #ed-bar button:hover { color: var(--text); border-color: var(--muted); }
+  #ed-bar[data-dirty] #ed-out { color: var(--heading); }
+  #ed-bar[data-dirty] button[data-a="copy"] { color: var(--bg); background: var(--steel); border-color: var(--steel); }
+
+  .clip { position: fixed; top: -1000px; opacity: 0; }
+
+  @media (max-width: 960px) {
+    [data-ed][data-changed]::after { left: -8px; }
+    #gutter button { background: var(--surface); }
+    #ed-bar { right: 12px; bottom: 12px; }
+  }
+
+  @media print {
+    #gutter, #ed-bar, .dec, .cmt-x { display: none; }
+    [data-ed][data-changed]::after { background: #000; }
+    .cmt { background: none; border-left: 2px solid #000; page-break-inside: avoid; }
+    .cmt-in:empty { display: none; }
+  }
+</style>
 </head>
 <body>
 <div class="layout">
@@ -403,6 +575,14 @@
     for all colors, aria-label on the <svg>, a <figcaption> stating the insight),
     <figure class="shot"> for base64-embedded images.
   - Keep it one self-contained file: no external CSS, fonts, scripts, or images.
+  - The page is editable by default. You add no editor markup: the editor script at
+    the end of the file finds every leaf text block itself. Two optional hooks exist, for documents that
+    really are a list of discrete proposals:
+      <div class="proposal" data-title="short stable label"> around each one, which
+      is what turns on its accept/reject control, and inside it <p class="lbl">Before</p>
+      <pre class="before"><code>..</code></pre> / <p class="lbl">After</p>
+      <pre class="after"><code>..</code></pre>, where only the "after" half is editable.
+    A <span class="loc"> after a proposal heading carries a file or line reference.
 -->
 
 <div class="tldr">
@@ -448,6 +628,290 @@
     addEventListener('resize', sync, { passive: true });
     sync();
   }
+</script>
+<script id="editor">
+  /* Inline editing + per-block comments. State lives in localStorage keyed by the
+     file path, so a reload keeps it. "Copy" puts a JSON of only what was touched
+     on the clipboard, to paste back into the chat. */
+  (function () {
+    const BLOCKS = 'h1,h2,h3,h4,h5,h6,p,li,td,th,dt,dd,figcaption,blockquote,summary';
+    const SEL = BLOCKS + ',pre.after>code';
+    const SKIP = 'nav,svg,#ed-bar,#gutter,.cmt';
+    const KEY = 'tohtml:' + location.pathname;
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const store = {
+      read() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } },
+      write(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} },
+      clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+    };
+
+    const txt = el => el.innerText.replace(/\xa0/g, ' ').replace(/\s+$/, '');
+    const quote = el => '\u201c' + el.dataset.fp +
+      (el.dataset.orig.length > el.dataset.fp.length ? '\u2026' : '') + '\u201d';
+    const orig = new Map();
+
+    // Plain-text editing, with a paste guard where plaintext-only is unsupported
+    function editable(el) {
+      el.setAttribute('contenteditable', 'plaintext-only');
+      if (el.contentEditable !== 'plaintext-only') {
+        el.setAttribute('contenteditable', 'true');
+        el.addEventListener('paste', e => {
+          e.preventDefault();
+          const t = (e.clipboardData || window.clipboardData).getData('text');
+          document.execCommand('insertText', false, t);
+        });
+      }
+    }
+
+    // Every leaf text block, plus the "after" half of a before/after pair
+    const blocks = [];
+    const counts = {};
+    main.querySelectorAll(SEL).forEach(el => {
+      if (el.closest(SKIP)) return;
+      if (el.matches('.meta,.tldr-label,.lbl')) return;
+      if (el.querySelector(BLOCKS)) return;
+      if (!el.textContent.trim()) return;
+      const sec = el.closest('section[id]');
+      const s = sec ? sec.id : (el.closest('.tldr') ? 'tldr' : 'head');
+      counts[s] = (counts[s] || 0) + 1;
+      el.dataset.ed = s + '#' + counts[s];
+      el.dataset.orig = txt(el);
+      el.dataset.fp = el.dataset.orig.slice(0, 60);
+      orig.set(el, el.innerHTML);
+      editable(el);
+      el.addEventListener('input', () => {
+        el.toggleAttribute('data-changed', txt(el) !== el.dataset.orig);
+        save();
+      });
+      blocks.push(el);
+    });
+
+    // Accept/reject only exists when the document is a list of proposals
+    const proposals = Array.from(main.querySelectorAll('.proposal'));
+    proposals.forEach((pr, i) => {
+      const h = pr.querySelector('h2,h3,h4,h5');
+      pr.dataset.pid = pr.dataset.title || (h ? h.textContent.trim() : 'proposal ' + (i + 1));
+      const row = document.createElement('div');
+      row.className = 'dec';
+      row.innerHTML = '<button type="button" value="accept">accept</button>' +
+                      '<button type="button" value="reject">reject</button>';
+      row.addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (b) setDec(pr, pr.dataset.dec === b.value ? '' : b.value);
+      });
+      pr.appendChild(row);
+    });
+
+    function setDec(pr, v) {
+      if (v) pr.dataset.dec = v; else delete pr.dataset.dec;
+      pr.querySelectorAll('.dec button').forEach(b => b.toggleAttribute('data-on', b.value === v));
+      save();
+    }
+
+    // Comments
+    function comment(el, value) {
+      let box = el._cmt;
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'cmt';
+        const inTable = !!el.closest('table');
+        box.innerHTML = '<div class="cmt-body">' +
+          (inTable ? '<p class="cmt-q"></p>' : '') +
+          '<div class="cmt-in" data-ph="Comment\u2026"></div></div>' +
+          '<button type="button" class="cmt-x" title="Remove comment">\u00d7</button>';
+        if (inTable) box.querySelector('.cmt-q').textContent = quote(el);
+        const field = box.querySelector('.cmt-in');
+        editable(field);
+        field.addEventListener('input', save);
+        box.querySelector('.cmt-x').addEventListener('click', () => {
+          box.remove();
+          el._cmt = null;
+          save();
+        });
+        let ref = el.closest('table') ? (el.closest('.table-wrap') || el.closest('table')) : el;
+        while (ref.nextElementSibling && ref.nextElementSibling.classList.contains('cmt')) {
+          ref = ref.nextElementSibling;
+        }
+        ref.insertAdjacentElement('afterend', box);
+        el._cmt = box;
+      }
+      const field = box.querySelector('.cmt-in');
+      if (value) field.textContent = value;
+      field.focus();
+      return box;
+    }
+
+    // Floating gutter toolbar
+    const gutter = document.createElement('div');
+    gutter.id = 'gutter';
+    gutter.innerHTML = '<button type="button" data-a="cmt" title="Comment">+</button>' +
+                       '<button type="button" data-a="rev" title="Revert this block">\u21ba</button>';
+    document.body.appendChild(gutter);
+    let target = null;
+
+    // Hover intent: the toolbar sits in the margin, so give the pointer time to
+    // cross the gap between the block and it without the toolbar vanishing.
+    let hideT;
+    document.addEventListener('mouseover', e => {
+      clearTimeout(hideT);
+      if (e.target.closest('#gutter')) return;
+      const el = e.target.closest('[data-ed]');
+      if (!el) {
+        hideT = setTimeout(() => {
+          gutter.removeAttribute('data-on');
+          target = null;
+        }, 350);
+        return;
+      }
+      target = el;
+      const r = el.getBoundingClientRect();
+      const tight = innerWidth <= 960;
+      gutter.toggleAttribute('data-above', tight);
+      gutter.style.top = (r.top + scrollY - (tight ? 24 : 0)) + 'px';
+      gutter.style.left = (r.left + scrollX - (tight ? 0 : 8)) + 'px';
+      gutter.querySelector('[data-a="rev"]').hidden = !el.hasAttribute('data-changed');
+      gutter.setAttribute('data-on', '');
+    });
+
+    gutter.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b || !target || !gutter.hasAttribute('data-on')) return;
+      if (b.dataset.a === 'cmt') {
+        comment(target);
+      } else {
+        target.innerHTML = orig.get(target);
+        target.removeAttribute('data-changed');
+        save();
+      }
+    });
+
+    // Bar
+    const bar = document.createElement('div');
+    bar.id = 'ed-bar';
+    bar.innerHTML = '<span id="ed-out"></span>' +
+      '<button type="button" data-a="copy">Copy</button>' +
+      '<button type="button" data-a="dl">Download</button>' +
+      '<button type="button" data-a="reset">Reset</button>';
+    document.body.appendChild(bar);
+    const out = bar.querySelector('#ed-out');
+
+    function collect() {
+      const edits = [], comments = [], decisions = [];
+      blocks.forEach(el => {
+        const now = txt(el);
+        if (now !== el.dataset.orig) {
+          edits.push({ at: el.dataset.ed, was: el.dataset.fp, now, html: el.innerHTML });
+        }
+        if (el._cmt) {
+          const v = el._cmt.querySelector('.cmt-in').innerText.trim();
+          if (v) comments.push({ at: el.dataset.ed, on: el.dataset.fp, text: v });
+        }
+      });
+      proposals.forEach(pr => {
+        if (pr.dataset.dec) decisions.push({ item: pr.dataset.pid, decision: pr.dataset.dec });
+      });
+      return { doc: document.title, saved: new Date().toISOString(), edits, comments, decisions };
+    }
+
+    // The exported payload carries only what was touched, no restore-only fields
+    function payload() {
+      const d = collect();
+      d.edits = d.edits.map(e => ({ at: e.at, was: e.was, now: e.now }));
+      return JSON.stringify(d, null, 2);
+    }
+
+    const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+    let timer;
+
+    function status() {
+      const d = collect();
+      const bits = [];
+      if (d.edits.length) bits.push(plural(d.edits.length, 'edit'));
+      if (d.comments.length) bits.push(plural(d.comments.length, 'comment'));
+      if (proposals.length) bits.push(d.decisions.length + '/' + proposals.length + ' decided');
+      out.textContent = bits.length ? bits.join(' \u00b7 ') : 'nothing changed yet';
+      bar.toggleAttribute('data-dirty',
+        !!(d.edits.length || d.comments.length || d.decisions.length));
+    }
+
+    function save() {
+      status();
+      clearTimeout(timer);
+      timer = setTimeout(() => store.write(collect()), 300);
+    }
+
+    function flash(msg) {
+      out.textContent = msg;
+      clearTimeout(flash.t);
+      flash.t = setTimeout(status, 2600);
+    }
+
+    async function copy() {
+      const s = payload();
+      let ok = false;
+      try { await navigator.clipboard.writeText(s); ok = true; } catch (e) {}
+      if (!ok) {
+        const ta = document.createElement('textarea');
+        ta.className = 'clip';
+        ta.value = s;
+        document.body.appendChild(ta);
+        ta.select();
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        ta.remove();
+      }
+      flash(ok ? 'copied \u2013 paste it back in the chat' : 'copy failed, use Download');
+    }
+
+    function download() {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([payload()], { type: 'application/json' }));
+      a.download = (document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') || 'report') + '-edits.json';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      flash('downloaded');
+    }
+
+    bar.addEventListener('click', e => {
+      const a = (e.target.closest('button') || {}).dataset;
+      if (!a) return;
+      if (a.a === 'copy') copy();
+      else if (a.a === 'dl') download();
+      else if (a.a === 'reset') {
+        if (!confirm('Discard all edits, comments and decisions?')) return;
+        blocks.forEach(el => {
+          el.innerHTML = orig.get(el);
+          el.removeAttribute('data-changed');
+          if (el._cmt) { el._cmt.remove(); el._cmt = null; }
+        });
+        proposals.forEach(pr => setDec(pr, ''));
+        clearTimeout(timer);
+        store.clear();
+        status();
+      }
+    });
+
+    // Restore, skipping anything whose block no longer matches (regenerated report)
+    const saved = store.read();
+    const find = a => blocks.find(b => b.dataset.ed === a.at && b.dataset.fp === (a.was || a.on));
+    (saved.edits || []).forEach(e => {
+      const el = find(e);
+      if (!el) return;
+      el.innerHTML = e.html !== undefined ? e.html : e.now;
+      el.setAttribute('data-changed', '');
+    });
+    (saved.comments || []).forEach(c => {
+      const el = find(c);
+      if (el) comment(el, c.text).querySelector('.cmt-in').blur();
+    });
+    (saved.decisions || []).forEach(d => {
+      const pr = proposals.find(x => x.dataset.pid === d.item);
+      if (pr) setDec(pr, d.decision);
+    });
+    status();
+  })();
 </script>
 </body>
 </html>
