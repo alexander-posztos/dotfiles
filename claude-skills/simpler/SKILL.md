@@ -23,5 +23,9 @@ Rules, adapted from ASD-STE100:
   abstract. Otherwise stay literal.
 - Keep code, commands, file paths, and error text verbatim. Never simplify those.
 - Answer in the language of the conversation.
+- Light structure. Put a blank line between ideas so the answer is two to
+  four short paragraphs, not one block. When the answer enumerates parts,
+  steps or options, write them as a numbered list, one sentence per item.
+  Nothing else (no headers, no bold).
 - No filler, no hedging, no restating the original answer's structure. Do not
   mention this skill or the standard.
