@@ -8,7 +8,11 @@ A few custom [Claude Code](https://claude.com/claude-code) skills I use day to d
 | `handoff` | Generates a copy-pasteable prompt to continue the work in a fresh Claude Code session, so you can start clean instead of dragging a bloated context along. |
 | `to-html` | Re-renders what the conversation already produced as one self-contained HTML page and opens it in the browser. The page is editable: you correct wording in place and leave comments per block, then hand the result back with one click. |
 | `close-the-loop` | A bug-fix loop for web apps: reproduce the bug as a failing test (red), make the smallest fix, confirm it in a real browser with Playwright, watch the test go green, then graduate that test into the suite as a permanent regression guard. |
-| `excalidraw` | Turns a description into a real, editable Excalidraw diagram. You write a compact spec, a zero-dependency Python builder expands it into valid `.excalidraw` JSON (correct bindings, fonts, auto-layout), and it opens for you. See its own [README](excalidraw/README.md). |
+| `texten-at` | German copy without AI tells, in Austrian standard German. 27 patterns (English-shaped German, AI vocabulary, grammar and structure tells) plus a Germany-German to Austrian mapping. Audits or rewrites. See its own [README](texten-at/README.md). |
+| `walkthrough` | Explains a file, PR, diff or topic one logical block at a time and waits for your "next" before continuing. You drive the pace, it never runs ahead. |
+| `variants` | Builds N genuinely distinct design variants of a UI section inside the real app behind a floating switcher. You flip through them live, pick one, and it promotes the winner and deletes the scaffolding. |
+| `strategy-debate` | Multi-turn strategy debate between Claude and GPT via the Codex CLI, with a synthesis of agreements, disputes and a joint recommendation at the end. |
+| `simpler` | Re-explains the previous answer in ASD-STE100-inspired simplified language. For when an explanation didn't land. |
 
 ## Install
 
@@ -24,4 +28,4 @@ ln -s "$PWD/claude-skills/grill-me" ~/.claude/skills/grill-me
 ```
 
 Then invoke it in a session: `/grill-me`, `/handoff`, `/to-html`, `/close-the-loop`,
-`/excalidraw` (or just ask in plain language, e.g. "draw this as a graph in excalidraw").
+`/texten-at`, `/walkthrough`, `/variants`, `/strategy-debate`, `/simpler` (or just ask in plain language).
