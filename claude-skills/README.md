@@ -13,6 +13,7 @@ A few custom [Claude Code](https://claude.com/claude-code) skills I use day to d
 | `variants` | Builds N genuinely distinct design variants of a UI section inside the real app behind a floating switcher. You flip through them live, pick one, and it promotes the winner and deletes the scaffolding. |
 | `strategy-debate` | Multi-turn strategy debate between Claude and GPT via the Codex CLI, with a synthesis of agreements, disputes and a joint recommendation at the end. |
 | `simpler` | Re-explains the previous answer in ASD-STE100-inspired simplified language. For when an explanation didn't land. |
+| `implement` | GitHub issue in, PR out, with proof: own worktree and dev server per issue, red/green tests, a browser click-through with screenshots, a cross-model review, a second model clicking through the UI, and an HTML report in chat that says where to click. A project skill with a config block. See its own [README](implement/README.md). |
 
 ## Install
 
@@ -28,4 +29,4 @@ ln -s "$PWD/claude-skills/grill-me" ~/.claude/skills/grill-me
 ```
 
 Then invoke it in a session: `/grill-me`, `/handoff`, `/to-html`, `/close-the-loop`,
-`/texten-at`, `/walkthrough`, `/variants`, `/strategy-debate`, `/simpler` (or just ask in plain language).
+`/texten-at`, `/walkthrough`, `/variants`, `/strategy-debate`, `/simpler`, `/implement 123` (or just ask in plain language).

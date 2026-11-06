@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  body{margin:0;font:14px/1.5 var(--font-sans);color:var(--foreground)}
+  h1{font-size:18px;margin:0 0 4px}
+  .sub{color:var(--muted-foreground);margin:0 0 14px}
+  .box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:0 0 14px}
+  .box h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);margin:0 0 8px}
+  ol{margin:0;padding-left:20px} li{margin:0 0 6px} li em{color:var(--muted-foreground);font-style:normal}
+  code{font:12px var(--font-mono);background:var(--code-background);padding:1px 5px;border-radius:4px}
+  .url{font-size:15px}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .meta div{background:var(--muted);border-radius:var(--radius);padding:10px 12px}
+  .meta b{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);font-weight:500}
+  .shots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .shots figure{margin:0} .shots img{width:100%;max-height:260px;object-fit:cover;object-position:top;display:block;border:1px solid var(--border);border-radius:var(--radius)}
+  .shots figcaption{font-size:12px;color:var(--muted-foreground);margin-top:4px}
+  .warn{color:var(--warning-foreground);background:var(--warning-surface);border-radius:var(--radius);padding:10px 12px}
+</style></head><body>
+<h1>gh #{N}: {TITLE}</h1>
+<p class="sub"><b>Bug.</b> {WHAT_WAS_BROKEN}</p>
+<p class="sub"><b>Fix.</b> {WHAT_CHANGED}</p>
+
+<div class="box">
+  <h2>Test it</h2>
+  <p class="url"><a href="{URL}">{URL}</a> &middot; {LOGIN}</p>
+  <ol>
+    <li>{STEP} <em>{EXPECTED}</em></li>
+  </ol>
+</div>
+
+<div class="box"><div class="meta">
+  <div><b>Branch</b>{BRANCH_LINE}</div>
+  <div><b>Tests</b>{TESTS}</div>
+  <div><b>Pi</b>{PI}</div>
+  <div><b>Codex</b>{CODEX}</div>
+</div></div>
+
+<div class="box"><h2>Screenshots</h2><div class="shots">
+  <figure><img src="{ABS_PNG}"><figcaption>{CAPTION}</figcaption></figure>
+</div></div>
+
+<div class="box"><h2>Open</h2><p class="warn">{OPEN}</p></div>
+
+<div class="box"><h2>Review</h2><a href="{PR_URL}">PR #{PR}</a> &middot; <a href="{PR_URL}/files">Files changed</a>. Merge it there, then tell me "merged" so I remove the worktree.</div>
+</body></html>
