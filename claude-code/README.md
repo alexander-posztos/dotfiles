@@ -31,3 +31,8 @@ chmod +x ~/.claude/statusline.sh
   "statusLine": { "type": "command", "command": "~/.claude/statusline.sh", "padding": 0 }
 }
 ```
+
+# Global CLAUDE.md
+
+`CLAUDE.md` here is my `~/.claude/CLAUDE.md`, the
+instructions Claude Code loads in every project.
