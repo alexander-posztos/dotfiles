@@ -11,4 +11,4 @@ Files:
 
 This one is a project skill: drop the folder into `.claude/skills/implement/` of a project, fill in the two config blocks, then `/implement 123`.
 
-The two review steps refer to things from my setup: the `pi-review` skill (pi coding agent, runs a different model against the diff) and T3 Code's `delegate_task` for a Codex child with a built-in browser. Swap in whatever second-model path you have, or drop the step. The flow still works with just the tests and your own click-through.
+The two review steps refer to things from my setup: the `cross-review` skill (a Codex child reviews the diff) and a Codex child with a built-in browser, both through T3 Code's `delegate_task`. Swap in whatever second-model path you have, or drop the step. The flow still works with just the tests and your own click-through.

@@ -77,7 +77,7 @@ Write `evidence/clickthrough.md`: the steps, what was seen, the screenshot names
 
 ### 5. Cross-model code review
 
-One round of a review by a different model on `master..HEAD` with the worktree as the repo (I use the `pi-review` skill, which runs the pi coding agent on gpt-6-astra and ends with a CLEAN / PASS WITH NOTES / NEEDS FIXES verdict). Save the report as `evidence/review-round-1.md`. Fix what is real, rerun the touched tests, and do not run it again. Everything left over, and everything judged not real, goes into the report's Open box with one line of why. Review findings are evidence, not orders. Verify against the code before changing anything.
+One round of a review by a different model on `master..HEAD` with the worktree as the repo (I use the `cross-review` skill, `master..HEAD in <worktree>`, which delegates to a Codex child on gpt-6-astra and ends with a CLEAN / PASS WITH NOTES / NEEDS FIXES verdict). Save the report as `evidence/review-round-1.md`. Fix what is real, rerun the touched tests, and do not run it again. Everything left over, and everything judged not real, goes into the report's Open box with one line of why. Review findings are evidence, not orders. Verify against the code before changing anything.
 
 One round on purpose. A loop that chases every finding to CLEAN found a new htmx race on each of six rounds on one issue; the time is better spent in the human's review.
 

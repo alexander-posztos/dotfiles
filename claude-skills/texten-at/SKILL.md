@@ -46,6 +46,7 @@ Everything after `Bad:` is the pattern to remove, everything after `Good:` is th
 2. **False agency.** Inanimate subjects act, decisions "entstehen", problems "entwickeln sich" to solutions, and the actor vanishes. Put the person or the product in subject position and name who does what.
    Bad: "Die App ermöglicht es dir, Termine direkt zu buchen."
    Good: "Du buchst Termine direkt in der App."
+   Modal verbs stay. "Sie können X" / "du kannst X" describes an option and is not false agency; fix only sentences where the actor is missing. Bare indicative for an optional action ("Sie buchen einen Termin unter ...") reads like a manual, especially in Sie-register mails. Use the indicative for what actually happens, "können" or an imperative for what the reader may do.
 3. **Typography and orthography.**
    Bad: "..." / “...” / mixed pairs. Good: „...“ throughout. Bad: 1,368.00 / Good: 1.368,00. Bad: auszuschliessen, heisst, Verstoss (Swiss ss is a model artifact) / Good: ß. Bad: 4% / Good: 4 %. Also bad: Title Case Headings, ISO dates in prose.
 4. **Gedankenstrich.** German prose barely uses it. Clusters of dashes are a strong AI tell; a single one in a long text is not a finding.
@@ -169,6 +170,7 @@ Removing tells is half the work. Prose with every pattern stripped can still rea
 ## Not a tell (don't touch)
 
 - bzw., usw., parentheses, a repeated word, one short standalone sentence, a single connector, a single Gedankenstrich in a long text.
+- "können" / "kann". A modal verb marking an option is not a tell and not a thing to tighten into bare indicative.
 - Formal register on legal pages, contracts, Mahnungen, and AGB. That register is correct there.
 - Correct Austrian forms. Jänner, die PDF, Kassa, heuer, Rechnung legen are never errors. Don't "fix" Austrian into Bundesdeutsch.
 - Phrasing the user dictated or already approved, and declared house phrases. That wording is data, not a finding.
