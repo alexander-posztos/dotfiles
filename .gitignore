@@ -15,3 +15,21 @@ pi/
 
 # Machine-local project registry (see nvim/lua/custom/projects-example.lua)
 nvim/lua/custom/projects.lua
+
+# herdr runtime state; only config.toml is tracked
+herdr/*.log
+herdr/*.log.*
+herdr/.plugins.lock
+herdr/session.json
+herdr/session-history.json
+herdr/sessions/
+herdr/agent-detection/
+herdr/config.toml.bak*
+
+# Local caches and app state next to tracked configs
+claude-code/.venv/
+claude-code/__pycache__/
+claude-code/ccdash-cache/
+herdr/release-notes.json
+hunk/
+zed/prompts/

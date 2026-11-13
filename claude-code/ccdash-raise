@@ -1,0 +1,53 @@
+#!/bin/sh
+# ccdash-raise - "raise or run" for the ccdash dashboard, bound to hyper+g.
+#
+# This launches the portable Go binary at /Users/alex/.local/bin/ccdash. The
+# Python implementation stays available via its CLI, but the hotkey now opens the
+# Go build. hyper+g ALWAYS brings up the actual dashboard - raise a live one if it
+# is showing, else open a fresh window - and NEVER raises a window whose dashboard
+# has been taken over by a resumed `claude` session.
+#
+# The reliable "live TUI" signal is the ccdash process itself: the Go binary still
+# executing in its default (no-arg) TUI mode. Resuming a session (Enter in the
+# TUI) execs the binary in place into `claude --resume <id>`, so a resumed window
+# no longer has a ccdash process and is correctly skipped. Refresh invocations
+# (`ccdash --refresh-one <dir>`) carry trailing args, and the older Python
+# dashboard runs from a different path, so anchoring the match to this exact
+# binary path (optionally with --singleton) excludes them all.
+#
+# The chord opens ccdash under `zsh -lc` (login but NOT interactive: no .zshrc),
+# where ~/.local/bin may be off PATH - so the binary is referenced by ABSOLUTE
+# path, never bare `ccdash`. --singleton makes a second near-simultaneous launch
+# exit 0 instead of opening a duplicate window.
+BIN="/Users/alex/.local/bin/ccdash"
+
+# Echo the pid of the first Ghostty GUI process at or above $1 in the tree.
+ghostty_ancestor() {
+    pid=$1
+    while [ -n "$pid" ] && [ "$pid" -gt 1 ]; do
+        case "$(ps -o comm= -p "$pid" 2>/dev/null)" in
+            */ghostty) echo "$pid"; return 0;;
+        esac
+        pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+    done
+    return 1
+}
+
+# Live TUI = the Go binary in default TUI mode: cmdline is exactly the binary path,
+# optionally with --singleton, and nothing else. Anchoring this way skips the
+# ghostty/login/zsh launch wrappers (their cmdline starts with those, not the
+# binary), the Python dashboard (different path), refresh modes (trailing args),
+# and resumed windows (exec'd away into claude). From a live TUI we walk up the
+# process tree to its Ghostty GUI ancestor and raise that window by pid.
+for tui in $(pgrep -f "^$BIN( --singleton)?\$"); do
+    gpid=$(ghostty_ancestor "$tui") || continue
+    wid=$(aerospace list-windows --monitor all --pid "$gpid" --format '%{window-id}' | head -1)
+    [ -n "$wid" ] && exec aerospace focus --window-id "$wid"
+done
+
+# Theme the dogfood instance. The chord runs under `zsh -lc` (no .zshrc), so an
+# exported CCDASH_THEME from an interactive shell never reaches here - set it
+# inline on the launched command. Bare `ccdash` from a shell keeps the default
+# (ember). The assignment is a shell prefix, so the ccdash process argv stays
+# exactly "$BIN --singleton" and the raise-detection match above still holds.
+exec open -na Ghostty --args -e zsh -lc "CCDASH_THEME=tokyonight $BIN --singleton"

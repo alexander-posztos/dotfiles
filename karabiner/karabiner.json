@@ -9,16 +9,50 @@
                                 "description": "Change caps_lock to ctrl+alt+cmd (Hyper without shift). Escape if alone.",
                                 "from": {
                                     "key_code": "caps_lock",
-                                    "modifiers": { "optional": ["any"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "left_control",
-                                        "modifiers": ["left_option", "left_command"]
+                                        "modifiers": [
+                                            "left_option",
+                                            "left_command"
+                                        ]
                                     }
                                 ],
-                                "to_if_alone": [{ "key_code": "escape" }],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ],
                                 "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Hyper+e: open/focus Zed (editor)",
+                        "manipulators": [
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "key_code": "e",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_control",
+                                            "left_option",
+                                            "left_command"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -a Zed"
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -27,7 +61,9 @@
             "name": "Default profile",
             "selected": true,
             "simple_modifications": [],
-            "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
+            "virtual_hid_keyboard": {
+                "keyboard_type_v2": "iso"
+            }
         }
     ]
 }

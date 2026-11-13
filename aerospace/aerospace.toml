@@ -51,6 +51,8 @@ ctrl-alt-cmd-shift-9 = 'move-node-to-workspace 9'
 ctrl-alt-cmd-b = 'exec-and-forget open -a "Firefox"'  # or "Google Chrome" or "Safari"
 ctrl-alt-cmd-t = 'exec-and-forget open -a "Ghostty"'
 ctrl-alt-cmd-d = 'exec-and-forget open -a "Discord"'
+ctrl-alt-cmd-g = 'exec-and-forget /Users/alex/.config/claude-code/ccdash-raise'  # hyper+g: focus existing ccdash window, else launch it
+ctrl-alt-cmd-a = 'exec-and-forget /Users/alex/.config/herdr/herdr-raise'  # hyper+a: focus the attached herdr client, else launch/reattach
 
 # Multi-monitor - Move workspace to next/prev monitor
 ctrl-alt-cmd-tab = 'move-workspace-to-monitor --wrap-around next'

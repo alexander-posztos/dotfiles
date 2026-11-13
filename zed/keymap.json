@@ -1,0 +1,35 @@
+// Zed keymap. Space-leader bindings ported from nvim (kickstart):
+// space e tree, space s f/g find/grep, space g g git panel, space g d project diff, ]c/[c hunks.
+[
+  {
+    "context": "Editor && vim_mode == normal && !menu",
+    "bindings": {
+      "space e": "project_panel::ToggleFocus",
+      "space s f": "file_finder::Toggle",
+      "space s g": "pane::DeploySearch",
+      "space g g": "git_panel::ToggleFocus",
+      "space g d": "git::Diff",
+      "space h p": "editor::ExpandAllDiffHunks",
+      "] c": "editor::GoToHunk",
+      "[ c": "editor::GoToPreviousHunk"
+    }
+  },
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "space e": "workspace::ToggleLeftDock"
+    }
+  },
+  {
+    "context": "GitPanel && ChangesList",
+    "bindings": {
+      "j": "git_panel::NextEntry",
+      "k": "git_panel::PreviousEntry",
+      "h": "git_panel::CollapseSelectedEntry",
+      "l": "git_panel::ExpandSelectedEntry",
+      "g g": "git_panel::FirstEntry",
+      "shift-g": "git_panel::LastEntry",
+      "space g g": "git_panel::ToggleFocus"
+    }
+  }
+]

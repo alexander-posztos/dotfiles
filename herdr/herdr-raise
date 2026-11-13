@@ -1,0 +1,49 @@
+#!/bin/sh
+# herdr-raise - "raise or run" for herdr, bound to hyper+a.
+#
+# hyper+a ALWAYS puts the herd in front: raise the Ghostty window holding an
+# attached herdr client if one exists, else open a fresh window and attach.
+#
+# Unlike ccdash, herdr is persistent, so the fallback branch is never destructive:
+# a bare `herdr` reattaches to the running server and its workspaces, and only
+# starts a new server when none is running. Detaching (prefix+q) leaves no client,
+# so the next chord correctly opens a window instead of raising a stale one.
+#
+# The match anchors on the CLIENT argv: the binary alone, optionally with
+# --session <name>. This excludes the detached `herdr server` process and the
+# CLI helpers (`herdr agent ...`, `herdr api ...`), which carry subcommands. A
+# server that slips past the pattern is harmless: it has no Ghostty ancestor, so
+# the walk fails and the loop moves on.
+#
+# The chord runs under `zsh -lc` (login but NOT interactive: no .zshrc), so the
+# binary is referenced by ABSOLUTE path, never bare `herdr`.
+BIN="/opt/homebrew/bin/herdr"
+
+# Echo the pid of the first Ghostty GUI process at or above $1 in the tree.
+ghostty_ancestor() {
+    pid=$1
+    while [ -n "$pid" ] && [ "$pid" -gt 1 ]; do
+        case "$(ps -o comm= -p "$pid" 2>/dev/null)" in
+            */ghostty) echo "$pid"; return 0;;
+        esac
+        pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+    done
+    return 1
+}
+
+# Accept the bare name too: a client started by hand from an interactive shell
+# has argv "herdr" rather than the absolute path.
+for client in $(pgrep -f "^($BIN|herdr)( --session [^ ]+)?\$"); do
+    gpid=$(ghostty_ancestor "$client") || continue
+    wid=$(aerospace list-windows --monitor all --pid "$gpid" --format '%{window-id}' | head -1)
+    [ -n "$wid" ] && exec aerospace focus --window-id "$wid"
+done
+
+# Scrub Claude Code's session-identity vars before starting herdr. The server is
+# long-lived and every pane inherits its environment, so a server started from
+# inside a Claude session brands every future pane as a nested child: Claude Code
+# then disables transcript saving in each one. Launching via `open` usually gets a
+# clean env from launchd, but not when the chord is fired from an agent's shell.
+exec open -na Ghostty --args -e zsh -lc \
+    "env -u CLAUDE_CODE_CHILD_SESSION -u CLAUDE_CODE_SESSION_ID \
+         -u CLAUDE_CODE_ENTRYPOINT -u CLAUDE_CODE_EXECPATH $BIN"

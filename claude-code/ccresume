@@ -1,0 +1,321 @@
+#!/usr/bin/env python3
+"""
+ccresume - a cross-project Claude Code session dashboard.
+
+Scans ~/.claude/history.jsonl (every prompt, reliable timestamps) and the
+per-session JSONL logs (for AI titles + verified cwd), then shows a recency-
+sorted, interactive list of your recent sessions across ALL projects.
+
+  Enter : cd into that session's dir and `claude --resume <id>`
+  ↑/↓ j/k: move      /: filter      g: group by project      r: rescan
+  ⏎ on filter: apply   q / Esc: quit
+
+Plain modes (no TUI):
+  ccresume --list [N]   print the N most recent sessions (default 30)
+  ccresume --json       dump the session index as JSON
+
+Dependency-free (Python stdlib only). Safe: read-only over your logs.
+"""
+import os, sys, json, glob, datetime, subprocess
+
+CLAUDE_DIR = os.path.expanduser("~/.claude")
+HISTORY = os.path.join(CLAUDE_DIR, "history.jsonl")
+PROJECTS = os.path.join(CLAUDE_DIR, "projects")
+HOME = os.path.expanduser("~")
+
+
+def _parse_ts(ts):
+    if ts is None:
+        return None
+    if isinstance(ts, (int, float)):
+        return datetime.datetime.fromtimestamp(ts / 1000)
+    try:
+        return datetime.datetime.fromisoformat(str(ts).replace("Z", "+00:00")).replace(tzinfo=None)
+    except Exception:
+        return None
+
+
+def _rel(dt):
+    if not dt:
+        return "?"
+    secs = (datetime.datetime.now() - dt).total_seconds()
+    if secs < 0:
+        secs = 0
+    if secs < 90:
+        return f"{int(secs)}s ago"
+    if secs < 5400:
+        return f"{int(secs // 60)}m ago"
+    if secs < 36 * 3600:
+        return f"{int(secs // 3600)}h ago"
+    d = int(secs // 86400)
+    if d < 14:
+        return f"{d}d ago"
+    if d < 60:
+        return f"{d // 7}w ago"
+    return dt.strftime("%Y-%m-%d")
+
+
+def build_index():
+    """Merge history.jsonl (breadth + recency) with per-session logs (titles + verified cwd)."""
+    sessions = {}  # sid -> dict
+
+    # 1) history.jsonl: reliable timestamps, project (cwd at prompt time), first prompt
+    try:
+        with open(HISTORY) as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    d = json.loads(line)
+                except Exception:
+                    continue
+                sid = d.get("sessionId")
+                if not sid:
+                    continue
+                dt = _parse_ts(d.get("timestamp"))
+                disp = (d.get("display") or "").strip()
+                s = sessions.setdefault(sid, {
+                    "sid": sid, "cwd": d.get("project"), "first": dt, "last": dt,
+                    "n": 0, "firstprompt": disp, "title": None, "branch": None,
+                })
+                s["n"] += 1
+                if dt:
+                    if s["first"] is None or dt < s["first"]:
+                        s["first"] = dt
+                        # keep the earliest *non-slash* prompt as the summary
+                    if s["last"] is None or dt > s["last"]:
+                        s["last"] = dt
+                if disp and not disp.startswith("/") and (
+                    not s["firstprompt"] or s["firstprompt"].startswith("/")):
+                    s["firstprompt"] = disp
+                if d.get("project"):
+                    s["cwd"] = d["project"]
+    except FileNotFoundError:
+        pass
+
+    # 2) enrich from per-session logs: AI title, verified cwd, git branch
+    for sf in glob.glob(os.path.join(PROJECTS, "*", "*.jsonl")):
+        sid = os.path.basename(sf)[:-6]
+        s = sessions.get(sid)
+        if s is None:
+            continue
+        try:
+            with open(sf) as fh:
+                for line in fh:
+                    if '"ai-title"' not in line and '"cwd"' not in line and '"gitBranch"' not in line:
+                        continue
+                    try:
+                        d = json.loads(line)
+                    except Exception:
+                        continue
+                    if d.get("type") == "ai-title" and d.get("aiTitle"):
+                        s["title"] = d["aiTitle"]
+                    if not s.get("branch") and d.get("gitBranch"):
+                        s["branch"] = d["gitBranch"]
+                    if d.get("cwd"):
+                        s["cwd_verified"] = d["cwd"]
+        except Exception:
+            continue
+
+    rows = [s for s in sessions.values() if s.get("last")]
+    rows.sort(key=lambda s: s["last"], reverse=True)
+    return rows
+
+
+def resolve_dir(s):
+    """Best dir to resume in. Prefer verified cwd; fall back to history project; then relocate by basename."""
+    for key in ("cwd_verified", "cwd"):
+        p = s.get(key)
+        if p and os.path.isdir(p):
+            return p
+    # relocate: project may have moved (e.g. ~/facturo -> ~/projects/facturo)
+    base = os.path.basename((s.get("cwd") or "").rstrip("/"))
+    if base:
+        for cand in (os.path.join(HOME, "projects", base), os.path.join(HOME, base),
+                     os.path.join(HOME, "uni", base)):
+            if os.path.isdir(cand):
+                return cand
+    return HOME
+
+
+def label(s):
+    return s.get("title") or s.get("firstprompt") or "(untitled)"
+
+
+def short_dir(s):
+    p = s.get("cwd_verified") or s.get("cwd") or ""
+    return os.path.basename(p.rstrip("/")) or p.replace(HOME, "~")
+
+
+def do_resume(s):
+    d = resolve_dir(s)
+    sid = s["sid"]
+    sys.stderr.write(f"\n→ cd {d} && claude --resume {sid}\n")
+    try:
+        os.chdir(d)
+    except Exception as e:
+        sys.stderr.write(f"(couldn't cd to {d}: {e}; staying in {os.getcwd()})\n")
+    os.execvp("claude", ["claude", "--resume", sid])
+
+
+# ---------- plain modes ----------
+def mode_list(rows, n=30):
+    for s in rows[:n]:
+        print(f"{_rel(s['last']):>9}  {short_dir(s)[:20]:20} "
+              f"{('['+s['branch']+']') if s.get('branch') else '':16} {label(s)[:60]}")
+    print(f"\n{len(rows)} sessions total. `ccresume` for interactive picker.", file=sys.stderr)
+
+
+def mode_json(rows):
+    out = [{k: (v.isoformat() if isinstance(v, datetime.datetime) else v)
+            for k, v in s.items()} for s in rows]
+    print(json.dumps(out, indent=2))
+
+
+# ---------- curses TUI ----------
+def tui(rows):
+    import curses
+
+    def run(stdscr):
+        curses.curs_set(0)
+        curses.use_default_colors()
+        for i in range(1, 8):
+            try:
+                curses.init_pair(i, i, -1)
+            except Exception:
+                pass
+        C_RECENT, C_DIR, C_BR, C_DIM, C_SEL, C_HEAD = 2, 6, 3, 8, 4, 5
+
+        sel = 0
+        top = 0
+        filt = ""
+        filtering = False
+        group = False
+
+        def visible():
+            base = rows
+            if filt:
+                f = filt.lower()
+                base = [s for s in rows if f in label(s).lower() or f in short_dir(s).lower()
+                        or f in (s.get("branch") or "").lower()]
+            return base
+
+        while True:
+            h, w = stdscr.getmaxyx()
+            stdscr.erase()
+            vis = visible()
+            if group:
+                vis = sorted(vis, key=lambda s: (short_dir(s).lower(), ), reverse=False)
+                vis = sorted(vis, key=lambda s: max(x["last"] for x in vis if short_dir(x) == short_dir(s)), reverse=True)
+
+            head = f" ccresume — {len(vis)} sessions across all projects "
+            try:
+                stdscr.addstr(0, 0, head[:w - 1], curses.A_BOLD | curses.color_pair(C_HEAD))
+            except Exception:
+                pass
+            hint = " ↑↓/jk move · ⏎ resume · / filter · g group · r rescan · q quit "
+            try:
+                stdscr.addstr(1, 0, hint[:w - 1], curses.color_pair(C_DIM))
+            except Exception:
+                pass
+
+            list_h = h - 4
+            if sel < 0:
+                sel = 0
+            if sel >= len(vis):
+                sel = max(0, len(vis) - 1)
+            if sel < top:
+                top = sel
+            if sel >= top + list_h:
+                top = sel - list_h + 1
+
+            last_group = None
+            for i, s in enumerate(vis[top:top + list_h]):
+                idx = top + i
+                y = 3 + i
+                is_sel = (idx == sel)
+                rel = _rel(s["last"])
+                d = short_dir(s)[:18]
+                br = (s.get("branch") or "")[:14]
+                lbl = label(s).replace("\n", " ")
+                line = f" {rel:>9}  {d:18} {br:14}  {lbl}"
+                line = line[:w - 1].ljust(w - 1)
+                attr = curses.color_pair(C_SEL) | curses.A_BOLD if is_sel else curses.A_NORMAL
+                try:
+                    stdscr.addstr(y, 0, line, attr)
+                    if not is_sel:
+                        stdscr.addstr(y, 1, f"{rel:>9}", curses.color_pair(C_RECENT))
+                        stdscr.addstr(y, 12, f"{d:18}", curses.color_pair(C_DIR))
+                        if br:
+                            stdscr.addstr(y, 31, f"{br:14}", curses.color_pair(C_BR))
+                except Exception:
+                    pass
+
+            status = (f" /{filt}_" if filtering else (f" filter: {filt} " if filt else ""))
+            try:
+                stdscr.addstr(h - 1, 0, status[:w - 1], curses.color_pair(C_DIM))
+            except Exception:
+                pass
+            stdscr.refresh()
+
+            ch = stdscr.getch()
+            if filtering:
+                if ch in (10, 13):
+                    filtering = False
+                elif ch == 27:
+                    filtering = False
+                    filt = ""
+                elif ch in (curses.KEY_BACKSPACE, 127, 8):
+                    filt = filt[:-1]
+                elif 32 <= ch < 127:
+                    filt += chr(ch)
+                    sel = 0
+                continue
+
+            if ch in (ord('q'), 27):
+                return None
+            elif ch in (ord('j'), curses.KEY_DOWN):
+                sel += 1
+            elif ch in (ord('k'), curses.KEY_UP):
+                sel -= 1
+            elif ch == curses.KEY_NPAGE:
+                sel += list_h
+            elif ch == curses.KEY_PPAGE:
+                sel -= list_h
+            elif ch in (ord('g'),):
+                group = not group
+                sel = 0
+            elif ch == ord('/'):
+                filtering = True
+            elif ch in (10, 13):
+                if vis:
+                    return vis[sel]
+
+    return curses.wrapper(run)
+
+
+def main():
+    args = sys.argv[1:]
+    rows = build_index()
+    if not rows:
+        print("No sessions found in ~/.claude. Have you used Claude Code yet?", file=sys.stderr)
+        return 1
+    if args and args[0] in ("--list", "-l"):
+        n = int(args[1]) if len(args) > 1 and args[1].isdigit() else 30
+        mode_list(rows, n)
+        return 0
+    if args and args[0] == "--json":
+        mode_json(rows)
+        return 0
+    if not sys.stdout.isatty():
+        mode_list(rows)
+        return 0
+    chosen = tui(rows)
+    if chosen:
+        do_resume(chosen)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
