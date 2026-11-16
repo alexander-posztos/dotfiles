@@ -6,7 +6,7 @@ project, the model and effort level, and stretch-to-fit gauges for context usage
 and (on Pro/Max) the 5-hour and weekly rate-limit windows:
 
 ```
-facturo [Fable 5 · max] │ Ctx ━━━━━━──── 35% [70k/200k] │ 5h ━━──── 18% [3h39m] │ Week ━━──── 35% [4d2h]
+myapp [Fable 5 · max] │ Ctx ━━━━━━──── 35% [70k/200k] │ 5h ━━──── 18% [3h39m] │ Week ━━──── 35% [4d2h]
 ```
 
 The `Ctx` gauge reads Claude Code's pre-calculated `context_window.used_percentage`

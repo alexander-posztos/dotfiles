@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Code status line, styled after pi's pi-sub-bar usage widget:
-#   facturo [Fable 5 · max] │ Ctx ━━━━━━──── 35% │ 5h ━━──── 21% [3h39m] │ Week ━━──── 28% [4d2h]
+#   myapp [Fable 5 · max] │ Ctx ━━━━━━──── 35% │ 5h ━━──── 21% [3h39m] │ Week ━━──── 28% [4d2h]
 #
 # Gauge look ported from @marckrenn/pi-sub-bar with the settings in
 # ~/.pi/agent/pi-sub-bar-settings.json: heavy ━ for filled and unfilled (unfilled

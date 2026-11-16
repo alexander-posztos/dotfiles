@@ -2,12 +2,12 @@
 raycast/extensions/
 
 # Machine-local app state and secrets
-claude/
 configstore/
 gcp/
 gh/
 himalaya/
 mpv/
+mcp-publisher/
 stripe/
 
 # Pi config moved to its own repo
@@ -33,3 +33,4 @@ claude-code/ccdash-cache/
 herdr/release-notes.json
 hunk/
 zed/prompts/
+karabiner/automatic_backups/

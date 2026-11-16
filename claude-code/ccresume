@@ -129,7 +129,7 @@ def resolve_dir(s):
         p = s.get(key)
         if p and os.path.isdir(p):
             return p
-    # relocate: project may have moved (e.g. ~/facturo -> ~/projects/facturo)
+    # relocate: project may have moved (e.g. ~/myapp -> ~/projects/myapp)
     base = os.path.basename((s.get("cwd") or "").rstrip("/"))
     if base:
         for cand in (os.path.join(HOME, "projects", base), os.path.join(HOME, base),
