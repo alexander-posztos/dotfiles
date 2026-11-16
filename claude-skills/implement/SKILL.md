@@ -83,7 +83,7 @@ One round on purpose. A loop that chases every finding to CLEAN found a new htmx
 
 ### 6. Second-model click-through
 
-Launch a child agent on a different model (I use Codex via the T3 Code `delegate_task` tool, with the built-in preview browser) with the brief in `codex-brief.md` next to this file, placeholders filled in. It checks behaviour through the UI only, never code, at desktop and phone width, and reports as `[blocker|should-fix|nit] <area>: <finding>` ending in `TOTALS:`.
+Launch a child agent on a different model (I use Codex on `gpt-6-astra` with `serviceTier: "priority"` via the T3 Code `delegate_task` tool, with the built-in preview browser) with the brief in `codex-brief.md` next to this file, placeholders filled in. It checks behaviour through the UI only, never code, at desktop and phone width, and reports as `[blocker|should-fix|nit] <area>: <finding>` ending in `TOTALS:`.
 
 Save the report as `evidence/codex-report.md`. Verify every blocker and should-fix against the live page or the code before changing anything (the external reviewer can be wrong). Fix what survives, rerun the touched tests. No second round; leftovers go into the Open box.
 

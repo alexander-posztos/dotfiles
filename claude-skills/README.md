@@ -14,7 +14,7 @@ A few custom [Claude Code](https://claude.com/claude-code) skills I use day to d
 | `strategy-debate` | Multi-turn strategy debate between Claude and GPT via the Codex CLI, with a synthesis of agreements, disputes and a joint recommendation at the end. |
 | `simpler` | Re-explains the previous answer in ASD-STE100-inspired simplified language. For when an explanation didn't land. |
 | `implement` | GitHub issue in, PR out, with proof: own worktree and dev server per issue, red/green tests, a browser click-through with screenshots, a cross-model review, a second model clicking through the UI, and an HTML report in chat that says where to click. A project skill with a config block. See its own [README](implement/README.md). |
-| `cross-review` | Cross-model code review in T3 Code. Hands a commit, range or uncommitted changes to a Codex child via `delegate_task`, relays its report verbatim, and checks each blocker against the code. Ends with a CLEAN / PASS WITH NOTES / NEEDS FIXES verdict. |
+| `cross-review` | Cross-model code review in T3 Code. Hands a commit, range or uncommitted changes to a Codex child via `delegate_task`, relays its report verbatim, and regrades each finding (blocker, should, nit) against the code. Ends with an APPROVE / CHANGES verdict. |
 
 ## Install
 
