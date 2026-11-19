@@ -63,6 +63,15 @@ as a question rather than an instruction, answer it and do not edit
 files yet. If the answer is obvious and the change trivial, still
 answer first and offer the change, asking before making it.
 
+# One by one
+
+When I ask you to go through something "one by one", "one at a time" or
+"step by step", I want one thing per message. Show me one change, one
+before and after, or one question, then end your turn and wait for my
+answer. Don't list or preview what's coming next. This holds even if
+you already did all the work up front. I'd rather type "next" ten times
+than read ten things at once.
+
 # Computer use (driving the Mac screen)
 
 Claude threads in T3 Code can't drive the screen, Codex children can. When
