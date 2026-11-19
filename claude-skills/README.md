@@ -15,6 +15,7 @@ A few custom [Claude Code](https://claude.com/claude-code) skills I use day to d
 | `simpler` | Re-explains the previous answer in ASD-STE100-inspired simplified language. For when an explanation didn't land. |
 | `implement` | GitHub issue in, PR out, with proof: own worktree and dev server per issue, red/green tests, a browser click-through with screenshots, a cross-model review, a second model clicking through the UI, and an HTML report in chat that says where to click. A project skill with a config block. See its own [README](implement/README.md). |
 | `cross-review` | Cross-model code review in T3 Code. Hands a commit, range or uncommitted changes to a Codex child via `delegate_task`, relays its report verbatim, and regrades each finding (blocker, should, nit) against the code. Ends with an APPROVE / CHANGES verdict. |
+| `arena` | Cross-model debate on a non-obvious decision in T3 Code. Three models from three providers answer blind via `delegate_task`, rebut each other once with anonymized answers, and the moderator reports agreements, disputes, new angles and a recommendation. |
 
 ## Install
 
@@ -30,4 +31,4 @@ ln -s "$PWD/claude-skills/grill-me" ~/.claude/skills/grill-me
 ```
 
 Then invoke it in a session: `/grill-me`, `/handoff`, `/to-html`, `/close-the-loop`,
-`/texten-at`, `/walkthrough`, `/variants`, `/strategy-debate`, `/simpler`, `/implement 123`, `/cross-review main..HEAD` (or just ask in plain language).
+`/texten-at`, `/walkthrough`, `/variants`, `/strategy-debate`, `/simpler`, `/implement 123`, `/cross-review main..HEAD`, `/arena <decision>` (or just ask in plain language).
