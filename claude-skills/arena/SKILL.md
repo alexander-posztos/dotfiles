@@ -17,7 +17,7 @@ Arena runs in T3 Code, where `delegate_task` reaches other providers. Anywhere e
 | --- | --- | --- | --- |
 | A | `claudeAgent` | `claude-opus-5-5` | `{ effort: "high" }` |
 | B | `codex` | `gpt-6.1-sol` | `{ reasoningEffort: "high" }` |
-| C | `antigravity` | `gemini-3.8-flash` | `{ thinking_level: "high" }` |
+| C | `antigravity` | `gemini-4-neon` | `{ thought_level: "high" }` |
 
 Roster or effort changes the user writes into the call replace the matching rows for that run. A seat keeps its letter and its model through both rounds.
 
