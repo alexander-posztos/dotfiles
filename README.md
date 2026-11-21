@@ -15,6 +15,9 @@ development, with coding agents doing much of the typing.
 - `vorssaint/` - Vorssaint settings backup (command bar, clipboard history, keep awake)
 - `claude-code/` - Claude Code statusline, session resume helper and my global `CLAUDE.md`
 - `claude-skills/` - custom Claude Code skills (see its README)
+- `scratch-cleanup/` - daily launchd job that deletes agent scratch output
+  (`~/projects/*/scratchpad`, `~/.t3/scratch`) untouched for 7 days. An empty
+  `.keep` file pins a folder.
 - `lazygit/` - lazygit config
 - `starship.toml` - shell prompt
 - `.vimrc` - IdeaVim config for JetBrains IDEs
@@ -47,3 +50,11 @@ cp ~/.config/t3code/themes/*.json ~/.t3/userdata/themes/
 ```
 
 Restore Vorssaint from its Settings window with the backup in `vorssaint/`.
+
+Install the scratch cleanup job:
+
+```bash
+ln -s ~/.config/scratch-cleanup/scratch-cleanup.sh ~/.local/bin/
+cp ~/.config/scratch-cleanup/local.scratch-cleanup.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/local.scratch-cleanup.plist
+```

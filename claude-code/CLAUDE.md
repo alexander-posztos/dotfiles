@@ -16,6 +16,9 @@ and you'll keep building on it.
 # General coding preferences
 
 - In Python I usually skip type annotations. Match the surrounding file.
+- `scratchpad/` in any repo and `~/.t3/scratch` get wiped daily of anything
+  untouched for 7 days. State a later run must read back goes in a folder
+  with an empty `.keep` file.
 - In UI work, avoid unnecessary secondary labels and descriptions. Let
   the layout do the explaining.
 - Never commit or push without my explicit go-ahead for that commit. Commit
